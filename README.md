@@ -1,1 +1,1 @@
-# dbt_bq_pipeline
+# dbt bigquery elt pipeline
