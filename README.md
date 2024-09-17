@@ -1,1 +1,1 @@
-# dbt bigquery elt pipeline
+# Data pipeline using airflow, dbt, gcs, bq
