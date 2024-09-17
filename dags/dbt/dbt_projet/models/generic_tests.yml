@@ -1,0 +1,45 @@
+models:
+  - name: trip
+    columns:
+      - name: trip_id
+        tests:
+          - unique
+          - not_null
+      - name: VendorID
+        tests:
+          - not_null
+          - relationships:
+              to: taxidb.vendor
+              field: VendorID
+              severity: warn
+      - name: RatecodeID
+        tests:
+          - not_null
+          - relationships:
+              to: taxidb.rate_code
+              field: RatecodeID
+              severity: warn
+      - name: PULocationID
+        tests:
+          - not_null
+          - relationships:
+              to: taxidb.location
+              field: LocationID
+              severity: warn
+      - name: DOLocationID
+        tests:
+          - not_null
+          - relationships:
+              to: taxidb.location
+              field: LocationID
+              severity: warn
+      - name: store_and_fwd_id
+        tests:
+          - not_null
+          - relationships:
+              to: taxidb.store_and_forward
+              field: store_and_fwd_id
+              severity: warn
+      - name: payment_type
+        tests:
+          - not_null
