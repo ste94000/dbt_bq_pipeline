@@ -1,7 +1,7 @@
 {{ config(materialized='incremental') }}
 
 select
-{{ dbt_utils.generate_surrogate_key(['st.tpep_pickup_datetime', 'st.tpep_dropoff_datetime', 'st.PULocationID', 'st.DOLocationID', 'st.total_amount', 'st.payment_type', 'st.VendorID']) }} as trip_id,
+{{ dbt_utils.generate_surrogate_key(['st.tpep_pickup_datetime', 'st.tpep_dropoff_datetime', 'st.PULocationID', 'st.DOLocationID', 'st.total_amount', 'st.payment_type', 'st.VendorID', 'st.RatecodeID', 'saf.store_and_fwd_id', 'st.trip_distance', 'st.fare_amount']) }} as trip_id,
 st.tpep_pickup_datetime as pickup_datetime,
 st.tpep_dropoff_datetime as dropoff_datetime,
 st.VendorID,
