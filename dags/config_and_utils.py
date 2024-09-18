@@ -1,6 +1,8 @@
 from params import KEYFILE_PATH_DBT_BQ, BASE_URL, GCP_PROJECT
-
+from datetime import date
+from dateutil.relativedelta import relativedelta
 import requests
+
 from cosmos import ProjectConfig, ProfileConfig
 from cosmos.profiles import GoogleCloudServiceAccountFileProfileMapping
 
@@ -19,19 +21,15 @@ project_config = ProjectConfig('/usr/local/airflow/dags/dbt/dbt_projet')
 # Download file
 def download_file(exec_date):
 
-    month = int(exec_date[5:7])
-    year = int(exec_date[0:4])
-    response = requests.get(BASE_URL + f'{year}-{month:02d}.parquet')
+    d = date(int(exec_date[:4]), int(exec_date[5:7]), 1)
 
-    while response.status_code != 200:
-        if month == 1:
-            month = 12
-            year -= 1
-        else:
-            month -= 1
-            response = requests.get(BASE_URL + f'{year}-{month:02d}.parquet')
+    while True:
+        response = requests.get(f'{BASE_URL}{d:%Y-%m}.parquet')
+        if response.status_code == 200:
+            break
+        d -= relativedelta(months=1)
 
-    print(f'✅ Data found in {month:02d}/{year}')
+    print(f'✅ Data found in {d:%m/%Y}')
 
     with open(f'/usr/local/airflow/tmp/data_{exec_date}.parquet', 'wb') as f:
         f.write(response.content)

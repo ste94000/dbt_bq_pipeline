@@ -22,8 +22,8 @@ default_args = {
 with DAG(
     'upload_and_transform',
     default_args=default_args,
-    schedule=None,
-    catchup=False
+    schedule='@monthly',
+    catchup=True
 ) as dag:
 
     download_task = PythonOperator(
