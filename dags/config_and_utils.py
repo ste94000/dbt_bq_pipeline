@@ -22,14 +22,12 @@ project_config = ProjectConfig('/usr/local/airflow/dags/dbt/dbt_projet')
 def download_file(exec_date):
 
     d = date(int(exec_date[:4]), int(exec_date[5:7]), 1)
+    d -= relativedelta(months=1)
 
-    while True:
-        response = requests.get(f'{BASE_URL}{d:%Y-%m}.parquet')
-        if response.status_code == 200:
-            break
-        d -= relativedelta(months=1)
-
-    print(f'✅ Data found in {d:%m/%Y}')
-
-    with open(f'/usr/local/airflow/tmp/data_{exec_date}.parquet', 'wb') as f:
-        f.write(response.content)
+    response = requests.get(f'{BASE_URL}{d:%Y-%m}.parquet')
+    if response.status_code == 200:
+        print(f'✅ Data found in {d:%m/%Y}')
+        with open(f'/usr/local/airflow/tmp/data_{exec_date}.parquet', 'wb') as f:
+            f.write(response.content)
+    else:
+        print(f'❌ No data available in {d:%m/%Y}')
