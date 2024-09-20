@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    tables:
+      - name: taxi_start
+
+  - name: taxidb
+    tables:
+      - name: store_and_forward

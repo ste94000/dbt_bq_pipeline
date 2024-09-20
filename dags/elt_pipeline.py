@@ -10,18 +10,11 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQue
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 
 from dags.config_and_utils import profile_config, project_config, download_file
-from params import GCP_PROJECT
-
-# Args
-default_args = {
-    'start_date': datetime(2024, 1, 1),
-    'email_on_failure': False,
-    'email_on_retry': False
-}
+from params import GCP_PROJECT, GCP_CONNECTION
 
 with DAG(
     'upload_and_transform',
-    default_args=default_args,
+    default_args={'start_date': datetime(2024, 2, 1)},
     schedule='@monthly',
     catchup=True
 ) as dag:
@@ -37,7 +30,7 @@ with DAG(
         src=f'/usr/local/airflow/tmp/data_{"{{ ds }}"}.parquet',
         dst='raw/',
         bucket='ex_buck',
-        gcp_conn_id='gcp_conn'
+        gcp_conn_id=GCP_CONNECTION
     )
 
     clean_up = BashOperator(
@@ -49,10 +42,10 @@ with DAG(
         task_id='gcs_to_bigquery',
         bucket='ex_buck',
         source_objects=[f'raw/data_{"{{ ds }}"}.parquet'],
-        destination_project_dataset_table=GCP_PROJECT+'.taxi_db.start_table',
-        write_disposition='WRITE_APPEND',
+        destination_project_dataset_table=GCP_PROJECT+'.raw.taxi_start',
+        write_disposition='WRITE_TRUNCATE',
         source_format='PARQUET',
-        gcp_conn_id='gcp_conn'
+        gcp_conn_id=GCP_CONNECTION
     )
 
     dbt_task_grp = DbtTaskGroup(

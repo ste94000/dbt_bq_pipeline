@@ -1,5 +1,5 @@
-from params import KEYFILE_PATH_DBT_BQ, BASE_URL, GCP_PROJECT
-from datetime import date
+from params import KEYFILE_PATH_GCP, BASE_URL, GCP_PROJECT, GCP_CONNECTION
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import requests
 
@@ -11,17 +11,17 @@ profile_config = ProfileConfig(
     profile_name='default',
     target_name='dev',
     profile_mapping= GoogleCloudServiceAccountFileProfileMapping(
-        conn_id= 'bqconn',
-        profile_args={'project': GCP_PROJECT, 'dataset': 'taxidb', 'keyfile': KEYFILE_PATH_DBT_BQ}
+        conn_id= GCP_CONNECTION,
+        profile_args={'project': GCP_PROJECT, 'dataset': 'taxidb', 'keyfile': KEYFILE_PATH_GCP}
     )
 )
 
-project_config = ProjectConfig('/usr/local/airflow/dags/dbt/dbt_projet')
+project_config = ProjectConfig('/usr/local/airflow/dags/dbt/dbt_repo')
 
 # Download file
 def download_file(exec_date):
 
-    d = date(int(exec_date[:4]), int(exec_date[5:7]), 1)
+    d = datetime(int(exec_date[:4]), int(exec_date[5:7]), 1)
     d -= relativedelta(months=1)
 
     response = requests.get(f'{BASE_URL}{d:%Y-%m}.parquet')

@@ -14,7 +14,7 @@ extract(DAY from tpep_dropoff_datetime) AS dropoff_day,
 extract(MONTH from tpep_dropoff_datetime) AS dropoff_month,
 extract(YEAR from tpep_dropoff_datetime) AS dropoff_year
 
-from {{ ref('start_view') }}
+from {{ ref('trip') }}
 
 {% if is_incremental() %}
 where tpep_pickup_datetime > (select max(pickup_datetime) from {{ this }})
